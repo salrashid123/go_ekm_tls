@@ -18,7 +18,7 @@ var (
 
 func main() {
 
-	caCert, err := os.ReadFile("certs/tls-ca-chain.pem")
+	caCert, err := os.ReadFile("../certs/tls-ca-chain.pem")
 	if err != nil {
 		fmt.Printf("Error reading cacert %v\n", err)
 		return

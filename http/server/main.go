@@ -73,7 +73,7 @@ func main() {
 	}
 	http2.ConfigureServer(server, &http2.Server{})
 	fmt.Println("Starting Server..")
-	err = server.ListenAndServeTLS("certs/server.crt", "certs/server.key")
+	err = server.ListenAndServeTLS("../certs/server.crt", "../certs/server.key")
 	fmt.Printf("Unable to start Server %v", err)
 
 }

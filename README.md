@@ -23,8 +23,12 @@ The snippets below shows how to extract the EKM in golang and openssl:
 
 ### golang
 
+
+#### HTTP
+
 ```bash
 # first run the server
+$ cd http/
 $ go run server/main.go 
 Starting Server..
 EKM my_nonce from TLS: 18f437fad46d7b4224fba3fe429bee4a83681a4d0157ec56b424c0939a227708
@@ -36,6 +40,25 @@ $ go run client/main.go
 EKM my_nonce: 18f437fad46d7b4224fba3fe429bee4a83681a4d0157ec56b424c0939a227708
 200 OK
 ok
+```
+
+#### gRPC
+
+See `grpc/` folder
+
+To run
+
+```bash
+cd grpc/
+$ go run server/server.go 
+Starting Server...
+     TLS Peer IP CheckPeerIP: 127.0.0.1
+EKM my_nonce: b0586f514325aab325b72bb8745de166bb34dbec722356878d7b0fc65f7aa49d
+Got rpc: --> unary RPC msg 
+
+$ go run client/client.go 
+message:"Hello unary RPC msg   from hostname "
+AuthType, ServerName tls, server.domain.comEKM my_nonce: b0586f514325aab325b72bb8745de166bb34dbec722356878d7b0fc65f7aa49d
 ```
 
 also see
