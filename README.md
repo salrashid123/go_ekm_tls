@@ -18,8 +18,18 @@ Most commonly, this means is you can perform "Channel Binding" where with a clie
 
 in this, the JWT token is only valid for that EKM/TLS session
 
+You can ofcourse invert the flow where the server sends back a signed JWT which includes the EKM.  This will allow the client to verify the "server that issued the JWT knows about the EKM".
 
-The snippets below shows how to extract the EKM in golang and openssl:
+1. client --> TLS --> server
+2. client extracts the EKM on the connection
+3. client connects to the server at some rpc application endpoint (eg `/connect`) 
+4. server extracts EKM from the connection
+5. server issues a verifiable JWT where one of the claims is the EKM value
+6. server sends the JWT back to the  client
+7. client verifies the JWT signature, extracts the ekm claim and compares it to the one from TLS
+
+
+The snippets below just shows how to extract the EKM in golang and openssl:
 
 ### golang
 
