@@ -28,7 +28,7 @@ func main() {
 
 	address := flag.String("host", "localhost:50051", "host:port of gRPC server")
 	serverName := flag.String("servername", "server.domain.com", "servername")
-	tlsCert := flag.String("tlsCert", "../certs/tls-ca-chain.pem", "CACert for server")
+	tlsCert := flag.String("tlsCert", "../certs/root-ca.crt", "CACert for server")
 	flag.Parse()
 
 	var err error

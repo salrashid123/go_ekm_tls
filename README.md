@@ -96,7 +96,7 @@ first run the client and server (to stop run `docker rm -f client server`)
       -cert /certs/server.crt \
       -key /certs/server.key \
       -port 8081 \
-      -CAfile /certs/tls-ca-chain.pem \
+      -CAfile /certs/root-ca.crt \
       -tlsextdebug \
       -tls1_3  \
       -trace 
@@ -109,7 +109,7 @@ docker run \
   -ti docker.io/salrashid123/openssl s_client \
        -connect localhost:8081 -keymatexport my_nonce -keymatexportlen 32 \
        -servername server.domain.com \
-       -CAfile /certs/tls-ca-chain.pem \
+       -CAfile /certs/root-ca.crt \
        -tls1_3 \
        -tlsextdebug \
        -trace
