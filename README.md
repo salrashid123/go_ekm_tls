@@ -52,6 +52,55 @@ EKM my_nonce: 18f437fad46d7b4224fba3fe429bee4a83681a4d0157ec56b424c0939a227708
 ok
 ```
 
+
+#### HTTP with JWT Bound Token
+
+This example covers the scenario for where client actually mints a JWT and encodes the current TLS session's EKM information.
+
+The specific claim where the EKM if encoded is `cnf.tbh` field as described in [OpenID Connect Token Bound Authentication](https://openid.net/specs/openid-connect-token-bound-authentication-1_0.html).  
+
+
+For example, if you run the client and server, you'll see something like this which prints out the JWT Bearer Token that is minted at the client.
+
+```bash
+$ go run client/main.go 
+    EKM my_nonce: f4342f468afe6a11d5cd311662b5be50b5b96fc444ae2623ef52586a61736611
+    EKM Hash KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic
+    Header:
+    {
+        "alg": "RS256",
+        "kid": "123456",
+        "typ": "JWT"
+    }
+
+    Payload:
+    {
+        "cnf": {
+            "tbh": "KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic"
+        },
+        "exp": 1743512414,
+        "iat": 1743512404,
+        "scope": "https://www.googleapis.com/auth/cloud-platform"
+    }
+    200 OK
+    ok
+```
+
+The `cnf.tbh` is the the `b64url(sha256(ekm))` of the EKM
+
+
+Server part extracts the EKM and parses/validates the Bearer JWT.  Then compares the `cnf.tbf` field and compares it to the EKM from TLS session.   If the values match, the request is accepted.
+
+```bash
+$ go run server/main.go 
+    Starting Server..
+    EKM  from TLS: f4342f468afe6a11d5cd311662b5be50b5b96fc444ae2623ef52586a61736611
+    Encoded EKM  from TLS: KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic
+    JWT KeyID 123456
+    EKM from Claim: KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic
+    EKM matches
+```
+
 #### gRPC
 
 See `grpc/` folder
