@@ -40,16 +40,18 @@ The snippets below just shows how to extract the EKM in golang and openssl:
 # first run the server
 $ cd http/
 $ go run server/main.go 
-Starting Server..
-EKM my_nonce from TLS: 18f437fad46d7b4224fba3fe429bee4a83681a4d0157ec56b424c0939a227708
-EKM value from header 18f437fad46d7b4224fba3fe429bee4a83681a4d0157ec56b424c0939a227708
-EKM value matches header
+
+    Starting Server..
+    EKM my_nonce from TLS: b47f680f2704d0351dfced758c19ce5ac95f2ac5e0c10575cb4e1b6bbfd69603
+    EKM value from header b47f680f2704d0351dfced758c19ce5ac95f2ac5e0c10575cb4e1b6bbfd69603
+    EKM value matches header
 
 # then the client
 $ go run client/main.go 
-EKM my_nonce: 18f437fad46d7b4224fba3fe429bee4a83681a4d0157ec56b424c0939a227708
-200 OK
-ok
+
+    EKM EXPORTER-my_label: b47f680f2704d0351dfced758c19ce5ac95f2ac5e0c10575cb4e1b6bbfd69603
+    200 OK
+    ok
 ```
 
 
@@ -64,8 +66,9 @@ For example, if you run the client and server, you'll see something like this wh
 
 ```bash
 $ go run client/main.go 
-    EKM my_nonce: f4342f468afe6a11d5cd311662b5be50b5b96fc444ae2623ef52586a61736611
-    EKM Hash KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic
+
+    EKM my_nonce: 4dfd59198bd38f9fd49f310822cd38c5f0bb108da9c17d523690abd37be9916b
+    EKM Hash xxAEmVDM7JXaM--XpTytVgbcagwx7mQS529noQmWQfY
     Header:
     {
         "alg": "RS256",
@@ -76,10 +79,10 @@ $ go run client/main.go
     Payload:
     {
         "cnf": {
-            "tbh": "KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic"
+            "tbh": "xxAEmVDM7JXaM--XpTytVgbcagwx7mQS529noQmWQfY"
         },
-        "exp": 1743512414,
-        "iat": 1743512404,
+        "exp": 1743624913,
+        "iat": 1743624903,
         "scope": "https://www.googleapis.com/auth/cloud-platform"
     }
     200 OK
@@ -93,12 +96,14 @@ Server part extracts the EKM and parses/validates the Bearer JWT.  Then compares
 
 ```bash
 $ go run server/main.go 
+
     Starting Server..
-    EKM  from TLS: f4342f468afe6a11d5cd311662b5be50b5b96fc444ae2623ef52586a61736611
-    Encoded EKM  from TLS: KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic
+    EKM  from TLS: 4dfd59198bd38f9fd49f310822cd38c5f0bb108da9c17d523690abd37be9916b
+    Encoded EKM  from TLS: xxAEmVDM7JXaM--XpTytVgbcagwx7mQS529noQmWQfY
     JWT KeyID 123456
-    EKM from Claim: KNqlJqy1sNGt6_B53KnU145OFOzXHdkuli90mti8nic
+    EKM from Claim: xxAEmVDM7JXaM--XpTytVgbcagwx7mQS529noQmWQfY
     EKM matches
+
 ```
 
 #### gRPC
@@ -110,14 +115,17 @@ To run
 ```bash
 cd grpc/
 $ go run server/server.go 
-Starting Server...
-     TLS Peer IP CheckPeerIP: 127.0.0.1
-EKM my_nonce: b0586f514325aab325b72bb8745de166bb34dbec722356878d7b0fc65f7aa49d
-Got rpc: --> unary RPC msg 
+
+    Starting Server...
+        TLS Peer IP CheckPeerIP: ::1
+    EKM EXPORTER-my_label: 8be3055a4b7efbc4cb08f164ef4dbde191d8af02a7cc932b84490fa540bff0e4
+    Got rpc: --> unary RPC msg 
 
 $ go run client/client.go 
-message:"Hello unary RPC msg   from hostname "
-AuthType, ServerName tls, server.domain.comEKM my_nonce: b0586f514325aab325b72bb8745de166bb34dbec722356878d7b0fc65f7aa49d
+
+    message:"Hello unary RPC msg "
+    AuthType, ServerName tls, server.domain.com
+    EKM EXPORTER-my_label: 8be3055a4b7efbc4cb08f164ef4dbde191d8af02a7cc932b84490fa540bff0e4
 ```
 
 also see
@@ -141,7 +149,7 @@ first run the client and server (to stop run `docker rm -f client server`)
   -p 8081:8081 \
   --net=host \
   -v `pwd`/certs:/certs \
-  -ti docker.io/salrashid123/openssl s_server  -keymatexport my_nonce -keymatexportlen 32  \
+  -ti docker.io/salrashid123/openssl s_server  -keymatexport EXPORTER-my_label -keymatexportlen 32  \
       -cert /certs/server.crt \
       -key /certs/server.key \
       -port 8081 \
@@ -156,7 +164,7 @@ docker run \
   --net=host \
   -v `pwd`/certs/:/certs \
   -ti docker.io/salrashid123/openssl s_client \
-       -connect localhost:8081 -keymatexport my_nonce -keymatexportlen 32 \
+       -connect localhost:8081 -keymatexport EXPORTER-my_label -keymatexportlen 32 \
        -servername server.domain.com \
        -CAfile /certs/root-ca.crt \
        -tls1_3 \
@@ -168,7 +176,7 @@ you should see the same EKM value on both ends:
 
 ```bash
 Keying material exporter:
-    Label: 'my_nonce'
+    Label: 'EXPORTER-my_nonce'
     Length: 32 bytes
     Keying material: 5A142A3D156D91783A0A58D722C3EE36F5FA33D3EC01E8A2E3C0491169FDA279
 ```
@@ -184,4 +192,4 @@ GET /get HTTP/1.0
 ekm: e0b7671ee6ed6a124f2631025c40c5611659aeea0ce710db3097a9527af1588b
 ```
 
-
+Also see [Simple openssl c client/server which prints the Exported Key Material (EKM)](https://gist.github.com/salrashid123/8524f3c622794f3efb9b07a0b8b07bad)

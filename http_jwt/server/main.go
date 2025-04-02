@@ -36,7 +36,7 @@ type CustomClaimsExample struct {
 func eventsMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		ekm, err := r.TLS.ExportKeyingMaterial("my_nonce", nil, 32)
+		ekm, err := r.TLS.ExportKeyingMaterial("EXPORTER-my_label", []byte("mycontext"), 32)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

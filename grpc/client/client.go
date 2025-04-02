@@ -102,12 +102,12 @@ func main() {
 			fmt.Printf("ERROR:  Could get remote TLS")
 			os.Exit(1)
 		}
-		ekm, err := tlsInfo.State.ExportKeyingMaterial("my_nonce", nil, 32)
+		ekm, err := tlsInfo.State.ExportKeyingMaterial("EXPORTER-my_label", []byte("mycontext"), 32)
 		if err != nil {
 			fmt.Printf("ERROR:  Could getting EKM %v", err)
 			os.Exit(1)
 		}
-		fmt.Printf("EKM my_nonce: %s\n", hex.EncodeToString(ekm))
+		fmt.Printf("EKM EXPORTER-my_label: %s\n", hex.EncodeToString(ekm))
 
 	default:
 		fmt.Errorf("Unknown AuthInfo type")

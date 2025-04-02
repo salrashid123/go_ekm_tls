@@ -38,12 +38,12 @@ func main() {
 		return
 	}
 	cs := conn.ConnectionState()
-	ekm, err = cs.ExportKeyingMaterial("my_nonce", nil, 32)
+	ekm, err = cs.ExportKeyingMaterial("EXPORTER-my_label", []byte("mycontext"), 32)
 	if err != nil {
 		fmt.Printf("Error getting ekm %v\n", err)
 		return
 	}
-	fmt.Printf("EKM my_nonce: %s\n", hex.EncodeToString(ekm))
+	fmt.Printf("EKM EXPORTER-my_label: %s\n", hex.EncodeToString(ekm))
 
 	tr := &http.Transport{
 		DialTLSContext: func(ctx context.Context, network string, addr string) (net.Conn, error) {

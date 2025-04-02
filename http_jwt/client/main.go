@@ -56,7 +56,7 @@ func main() {
 		return
 	}
 	cs := conn.ConnectionState()
-	ekm, err = cs.ExportKeyingMaterial("my_nonce", nil, 32)
+	ekm, err = cs.ExportKeyingMaterial("EXPORTER-my_label", []byte("mycontext"), 32)
 	if err != nil {
 		fmt.Printf("Error getting ekm %v\n", err)
 		return
