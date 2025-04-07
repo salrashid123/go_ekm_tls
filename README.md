@@ -59,7 +59,7 @@ $ go run client/main.go
 
 This example covers the scenario for where client actually mints a JWT and encodes the current TLS session's EKM information.
 
-The specific claim where the EKM if encoded is `cnf.tbh` field as described in [OpenID Connect Token Bound Authentication](https://openid.net/specs/openid-connect-token-bound-authentication-1_0.html).  
+For JWT, the example below uses the EKM encoded as `cnf.kid` as descrbed in [Representation of a Key ID for a Proof-of-Possession Key](https://datatracker.ietf.org/doc/html/rfc7800#section-3.4)
 
 
 For example, if you run the client and server, you'll see something like this which prints out the JWT Bearer Token that is minted at the client.
@@ -79,7 +79,7 @@ $ go run client/main.go
     Payload:
     {
         "cnf": {
-            "tbh": "xxAEmVDM7JXaM--XpTytVgbcagwx7mQS529noQmWQfY"
+            "kid": "xxAEmVDM7JXaM--XpTytVgbcagwx7mQS529noQmWQfY"
         },
         "exp": 1743624913,
         "iat": 1743624903,

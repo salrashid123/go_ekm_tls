@@ -25,7 +25,7 @@ var (
 )
 
 type CNF struct {
-	TBH string `json:"tbh,omitempty"`
+	KID string `json:"kid,omitempty"`
 }
 
 type CustomClaimsExample struct {
@@ -109,7 +109,7 @@ func main() {
 
 	e := base64.RawURLEncoding.EncodeToString(bs)
 	c := CNF{
-		TBH: e,
+		KID: e,
 	}
 	fmt.Printf("EKM Hash %v\n", e)
 
@@ -164,12 +164,10 @@ func prettyPrintJWT(token string) error {
 		return fmt.Errorf("invalid JWT format")
 	}
 
-	fmt.Println("Header:")
 	if err := prettyPrintPart(parts[0]); err != nil {
 		return fmt.Errorf("error parsing header: %w", err)
 	}
 
-	fmt.Println("\nPayload:")
 	if err := prettyPrintPart(parts[1]); err != nil {
 		return fmt.Errorf("error parsing payload: %w", err)
 	}

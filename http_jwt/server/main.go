@@ -24,7 +24,7 @@ var ()
 const ()
 
 type CNF struct {
-	TBH string `json:"tbh,omitempty"`
+	KID string `json:"kid,omitempty"`
 }
 
 type CustomClaimsExample struct {
@@ -107,7 +107,7 @@ func eventsMiddleware(h http.Handler) http.Handler {
 
 			if claims, ok := token.Claims.(*CustomClaimsExample); ok && token.Valid {
 
-				fmt.Printf("EKM from Claim: %v\n", claims.CNF.TBH)
+				fmt.Printf("EKM from Claim: %v\n", claims.CNF.KID)
 
 				h := sha256.New()
 				h.Write(ekm)
@@ -115,7 +115,7 @@ func eventsMiddleware(h http.Handler) http.Handler {
 
 				encodedEKM := base64.RawURLEncoding.EncodeToString(bs)
 
-				if encodedEKM == claims.CNF.TBH {
+				if encodedEKM == claims.CNF.KID {
 					fmt.Println("EKM matches")
 				} else {
 					fmt.Println("EKM verification failed")
