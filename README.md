@@ -10,7 +10,7 @@ Basically, you can use the EKM to assert some application-level logic to the TLS
 
 Most commonly, this means is you can perform "Channel Binding" where with a client-server system.  For example:
 
-1. client --> TLS --> server
+1. `client`--> `TLS` --> `server`
 2. client extracts the EKM on the connection
 3. client issues a auth token (eg JWT/oidc token) where the EKM is a claim
 4. client sends the JWT to the server
@@ -20,7 +20,7 @@ in this, the JWT token is only valid for that EKM/TLS session
 
 You can ofcourse invert the flow where the server sends back a signed JWT which includes the EKM.  This will allow the client to verify the "server that issued the JWT knows about the EKM".
 
-1. client --> TLS --> server
+1. `client`--> `TLS` --> `server`
 2. client extracts the EKM on the connection
 3. client connects to the server at some rpc application endpoint (eg `/connect`) 
 4. server extracts EKM from the connection
@@ -30,6 +30,10 @@ You can ofcourse invert the flow where the server sends back a signed JWT which 
 
 
 The snippets below just shows how to extract the EKM in golang and openssl:
+
+also see
+
+* [TPM One Time Password using TLS SessionKey](https://github.com/salrashid123/tls_tpm_one_time_password)
 
 ### golang
 
