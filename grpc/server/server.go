@@ -13,18 +13,20 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	tlsCert  = flag.String("tlsCert", "../certs/server.crt", "tls Certificate")
-	tlsKey   = flag.String("tlsKey", "../certs/server.key", "tls Key")
+	tlsCert  = flag.String("tlsCert", "certs/server.crt", "tls Certificate")
+	tlsKey   = flag.String("tlsKey", "certs/server.key", "tls Key")
 	grpcport = flag.String("grpcport", ":50051", "grpcport")
+	useTLS   = flag.Bool("useTLS", true, "use TLS")
 )
 
 const (
-	address string = ":50051"
+	address string = ":8080"
 )
 
 type Server struct {
@@ -44,7 +46,13 @@ func authUnaryInterceptor(
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (interface{}, error) {
-	//md, _ := metadata.FromIncomingContext(ctx)
+
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok {
+		for k := range md {
+			fmt.Printf("Header: %s %s\n", k, md.Get(k))
+		}
+	}
 	fmt.Printf("     TLS Peer IP Check")
 	var newCtx context.Context
 	peer, ok := peer.FromContext(ctx)
@@ -97,13 +105,16 @@ func main() {
 
 	sopts := []grpc.ServerOption{}
 
-	ce, err := credentials.NewServerTLSFromFile(*tlsCert, *tlsKey)
-	if err != nil {
-		fmt.Printf("Failed to generate credentials %v", err)
-		os.Exit(1)
+	if *useTLS {
+		ce, err := credentials.NewServerTLSFromFile(*tlsCert, *tlsKey)
+		if err != nil {
+			fmt.Printf("Failed to generate credentials %v", err)
+			os.Exit(1)
+		}
+		sopts = append(sopts, grpc.Creds(ce))
+		sopts = append(sopts, grpc.UnaryInterceptor(authUnaryInterceptor))
 	}
-	sopts = append(sopts, grpc.Creds(ce))
-	sopts = append(sopts, grpc.UnaryInterceptor(authUnaryInterceptor))
+
 	s := grpc.NewServer(sopts...)
 	srv := NewServer()
 

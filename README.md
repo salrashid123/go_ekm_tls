@@ -136,6 +136,9 @@ also see
 
 * [go_mtls_scratchpad Exported Key Material](https://github.com/salrashid123/go_mtls_scratchpad/tree/main#exported-key-material)
 
+Note that to extract the EKM in an RPC prior to making the api call, you need to set a custom credential.  see
+
+* [grpc/grpc-go/issues/9083](https://github.com/grpc/grpc-go/issues/9083#issuecomment-4319325003)
 
 ### OpenSSL
 
